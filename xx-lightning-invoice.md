@@ -1,4 +1,4 @@
-# BOLT #12: Unified Lightning Network Invoice
+# BOLT #xx: Unified Lightning Network Invoice
 
 Defining structure and MIME type for Lightning Network Invoice containing BOLT-11 payload. This will help reduce size of data included in QR codes, maintain backwards compatibility and leverage existing `bitcoin:` URI scheme.
 
