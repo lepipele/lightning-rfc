@@ -31,11 +31,20 @@ Standard `bitcoin:address?amount=0.1` payment requests can be extended with opti
 If response sent by web server is `application/bitcoin-lightning-invoice` MIME type, wallet would proceed with decoding the data per [BOLT-11 Invoice Protocol](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md). If payment can't be routed through existing LN channels user has open, wallet should offer to open the channel using embedded peer information.
 
 ## Example
-Payment Server generates invoice for 0.020 BTC to be sent over Lightning Network with fallback to 3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX. Instead of embedding [BOLT 11](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md#on-mainnet-with-fallback-p2sh-address-3ektnhqd7riae6uzmj2zift9ygrrksgzqx), Payment Server generates following payment URI: `bitcoin:3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX?amount=0.02&r=https://btcpayserver.com/bolt11/invoice_id`
 
-Lightning Network wallet's would issue HTTP GET request to `https://btcpayserver.com/bolt11/invoice_id` with `Accept: application/bitcoin-lightning-invoice` HTTP header. 
+If the user has an bitcoin wallet, the user experience is exactly as [BIP70](https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki) is specified.
 
-If invoice is present server responds with:
+![Bitcoin Wallet](xx-lightning-invoice/1.png)
+
+On the other hand, if the user has a lightning wallet, while the same QR Code is presented, the wallet requests differently.
+
+![Lightning Wallet](xx-lightning-invoice/2.png)
+
+Payment Server generates invoice for 0.020 BTC to be sent over Lightning Network with fallback to 3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX. Instead of embedding [BOLT 11](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md#on-mainnet-with-fallback-p2sh-address-3ektnhqd7riae6uzmj2zift9ygrrksgzqx), Payment Server generates following payment URI: `bitcoin:?r=https://pay.example.com/order/abcd`
+
+Lightning Network wallet's would issue HTTP GET request to `bitcoin:?r=https://pay.example.com/order/abcd` with `Accept: application/bitcoin-lightning-invoice` HTTP header. 
+
+If the server supports lightning payment, it responds with the following data:
 
 <pre>
 Content-Type: application/bitcoin-lightning-invoice
