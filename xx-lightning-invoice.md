@@ -49,16 +49,34 @@ If the server supports lightning payment, it responds with the following data:
 <pre>
 Content-Type: application/bitcoin-lightning-invoice
 
-lnbc20m1pvjluezhp58yjmdan79s6qqdhdzgynm4zwqd5d7xmw5fk98klysy043l2ahrqspp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqfppj3a24vwu6r8ejrss3axul8rxldph2q7z9kmrgvr7xlaqm47apw3d48zm203kzcq357a4ls9al2ea73r8jcceyjtya6fu5wzzpe50zrge6ulk4nvjcpxlekvmxl6qcs9j3tz0469gq5g658y
-039ae2ef0c151e1e9032521002893dee94a5751c827e4941b5167f9d655a997c6f@34.200.252.146
-Y'alls
+{
+  "bolt11" : "lnbc20m1pvjluezhp58yjmdan79s6qqdhdzgynm4zwqd5d7xmw5fk98klysy043l2ahrqspp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqfppj3a24vwu6r8ejrss3axul8rxldph2q7z9kmrgvr7xlaqm47apw3d48zm203kzcq357a4ls9al2ea73r8jcceyjtya6fu5wzzpe50zrge6ulk4nvjcpxlekvmxl6qcs9j3tz0469gq5g658y",
+
+  # Optional
+  "nodeInformation" :
+  {
+    "nodeId" : "039ae2ef0c151e1e9032521002893dee94a5751c827e4941b5167f9d655a997c6f@lnnode.example.com",
+
+    # Optional
+    "defaultChannelName" : "Example Store",
+
+    # Optional (default: false)
+    "prefundingAllowed": true
+  },
+
+  # Optional
+  "fallbackAddress" : "bc1...."
+}
 </pre>
 
 This invoice would be parsed as:
 
- - BOLT-11 payload: `lnbc20m1pvj...`
- - LN Peer info: `039ae2ef0...`
- - Optional alias for LN Peer info to use in Wallet Contacts: `Y'alls`
+ * `bolt11` as specified by [BOLT specification].(https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
+ * `nodeId` the information necessary to the wallet to create a new channel.
+ * `defaultChannelName` if the user creates a new channel, this is the proposed default channel name. 
+ * `nodeInformation` in case the wallet fails to route a Lightning payment, it can propose to open a channel to the user.
+ * `prefundingAllowed` if `true` and the payment failed to route on Lightning Network, the wallet can pay the invoice by prefunding the channel. (default: `false`)
+ * `fallbackAddress`, if specified and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (And potentially open a channel in the same transaction)
  
  ## References
  
