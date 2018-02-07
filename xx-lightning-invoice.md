@@ -8,43 +8,19 @@ The primary motivation is unifying `bitcoin:` URI schemes for both on-chain and 
 
 ## Specification
 
-The Media Type (Content-Type in HTML/email headers) shall be:
+A new MIME type  (Content-Type in HTML/email headers) shall be:
 
 Message | Type/Subtype
 --------|---------------
 Lightning Network Invoice | application/bitcoin-lightning-invoice
 
-Clients can use this MIME to signal acceptance by setting `Accept: application/bitcoin-lightning-invoice` Header in HTTP request. If Server is responding with Invoice containing BOLT-11 payload it will set `Content-Type: application/bitcoin-lightning-invoice` Header in HTTP response.
+`bitcoin:` url scheme is extended with optional `r=ENCODED_URL` as per [BIP-72](https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki). Compatible Lightning Network wallets would parse this query parameter and, if present, send a GET request to extracted URL with HTTP header `Accept: application/bitcoin-lightning-invoice`.
 
-We are opting out for compact structure of Invoice with newline as separator of information in body of HTTP response. Each line will have predefined function:
+If response sent by web server returns HTTP code 200 and has HTTP header `Content-Type: application/bitcoin-lightning-invoice` the lightning wallet would proceed with decoding the data as described below.
 
-<pre>
-[BOLT-11 payload]
-[Lightning Network peer information, optional]
-[Lightning Network peer alias, optional]
-</pre>
+![Bitcoin Wallet](xx-lightning-invoice/2.png)
 
-## Implementation
-
-Standard `bitcoin:address?amount=0.1` payment requests can be extended with optional `r=ENCODED_URL` per [BIP-72](https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki). Compatible Lightning Network wallets would parse this query parameter and, if present, send request to extracted URL.
-
-If response sent by web server is `application/bitcoin-lightning-invoice` MIME type, wallet would proceed with decoding the data per [BOLT-11 Invoice Protocol](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md). If payment can't be routed through existing LN channels user has open, wallet should offer to open the channel using embedded peer information.
-
-## Example
-
-If the user has an bitcoin wallet, the user experience is exactly as [BIP70](https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki) is specified.
-
-![Bitcoin Wallet](xx-lightning-invoice/1.png)
-
-On the other hand, if the user has a lightning wallet, while the same QR Code is presented, the wallet requests differently.
-
-![Lightning Wallet](xx-lightning-invoice/2.png)
-
-Payment Server generates invoice for 0.020 BTC to be sent over Lightning Network with fallback to 3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX. Instead of embedding [BOLT 11](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md#on-mainnet-with-fallback-p2sh-address-3ektnhqd7riae6uzmj2zift9ygrrksgzqx), Payment Server generates following payment URI: `bitcoin:?r=https://pay.example.com/order/abcd`
-
-Lightning Network wallet's would issue HTTP GET request to `bitcoin:?r=https://pay.example.com/order/abcd` with `Accept: application/bitcoin-lightning-invoice` HTTP header. 
-
-If the server supports lightning payment, it responds with the following data:
+The format of the server is formatted as example below:
 
 <pre>
 Content-Type: application/bitcoin-lightning-invoice
@@ -71,16 +47,24 @@ Content-Type: application/bitcoin-lightning-invoice
 
 This invoice would be parsed as:
 
- * `bolt11` as specified by [BOLT specification].(https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
+ * `bolt11` as specified by [BOLT specification](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
+ * `nodeInformation` in case the wallet fails to route a Lightning payment, it can propose to open a channel to the user.
  * `nodeId` the information necessary to the wallet to create a new channel.
  * `defaultChannelName` if the user creates a new channel, this is the proposed default channel name. 
- * `nodeInformation` in case the wallet fails to route a Lightning payment, it can propose to open a channel to the user.
  * `prefundingAllowed` if `true` and the payment failed to route on Lightning Network, the wallet can pay the invoice by prefunding the channel. (default: `false`)
- * `fallbackAddress`, if specified and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (And potentially open a channel in the same transaction)
+ * `fallbackAddress`, if specified and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (Potentially at the same time as opening a channel for future transactions)
+
+ ## Backward compatibility
+
+If the user has a bitcoin wallet supporting only on-chain payment, the wallet would use [BIP70](https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki) or [BIP72](https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki), which are two protocols already widely deployed.
+
+![Lightning Wallet](xx-lightning-invoice/1.png)
  
  ## References
  
-  - [BOLT-11](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
+  - [BOLT-11: Invoice Protocol for Lightning Payments](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
+  - [BIP72: bitcoin: uri extensions for Payment Protocol](https://github.com/bitcoin/bips/blob/master/bip-0072.mediawiki)
+  - [BIP70: Payment Protocol](https://github.com/bitcoin/bips/blob/master/bip-0070.mediawiki)
   
  ## Authors
  
