@@ -38,10 +38,7 @@ Content-Type: application/bitcoin-lightning-invoice
 
     # Optional (default: false)
     "prefundingAllowed": true
-  },
-
-  # Optional
-  "fallbackAddress" : "bc1...."
+  }
 }
 </pre>
 
@@ -52,7 +49,8 @@ This invoice would be parsed as:
  * `nodeId` the information necessary to the wallet to create a new channel.
  * `defaultChannelName` if the user creates a new channel, this is the proposed default channel name. 
  * `prefundingAllowed` if `true` and the payment failed to route on Lightning Network, the wallet can pay the invoice by prefunding the channel. (default: `false`)
- * `fallbackAddress`, if specified and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (Potentially at the same time as opening a channel for future transactions)
+ 
+ Note: if specified the `f` field of the `bolt11` is specified, and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (Potentially at the same time as opening a channel for future transactions)
 
  ## Backward compatibility
 
