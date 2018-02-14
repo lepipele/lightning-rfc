@@ -34,7 +34,7 @@ Content-Type: application/bitcoin-lightning-invoice
     "nodeId" : "039ae2ef0c151e1e9032521002893dee94a5751c827e4941b5167f9d655a997c6f@lnnode.example.com",
 
     # Optional
-    "defaultChannelName" : "Example Store",
+    "alias" : "Example Store",
 
     # Optional (default: false)
     "prefundingAllowed": true
@@ -47,7 +47,7 @@ This invoice would be parsed as:
  * `bolt11` as specified by [BOLT specification](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
  * `nodeInformation` in case the wallet fails to route a Lightning payment, it can propose to open a channel to the user.
  * `nodeId` the information necessary to the wallet to create a new channel.
- * `defaultChannelName` if the user creates a new channel, this is the proposed default channel name. 
+ * `alias` if the user creates a new channel, this is user friendly name wallet should use for the channel. 
  * `prefundingAllowed` if `true` and the payment failed to route on Lightning Network, the wallet can pay the invoice by prefunding the channel. (default: `false`)
  
  Note: if specified the `f` field of the `bolt11` is specified, and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (Potentially at the same time as opening a channel for future transactions)
