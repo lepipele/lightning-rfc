@@ -38,7 +38,14 @@ Content-Type: application/bitcoin-lightning-invoice
 
     # Optional (default: false)
     "prefundingAllowed": true
-  }
+  },
+
+  # Optional 
+  "onchainPayment" :
+  {
+    "address" : "bc1....",
+    "amount" : 102000
+  }  
 }
 </pre>
 
@@ -49,8 +56,14 @@ This invoice would be parsed as:
  * `nodeId` the information necessary to the wallet to create a new channel.
  * `alias` if the user creates a new channel, this is user friendly name wallet should use for the channel. 
  * `prefundingAllowed` if `true` and the payment failed to route on Lightning Network, the wallet can pay the invoice by prefunding the channel. (default: `false`)
+ * `onchainPayment.address`, if the payment failed to route on Lightning Network, the wallet may propose to the user to pay on-chain (Potentially at the same time as opening a channel for future transactions)
+ * `onchainPayment.amount`, the amount of satoshi to pay for settling the invoice on chain.
  
- Note: if specified the `f` field of the `bolt11` is specified, and the payment failed to route on Lightning Network, the wallet can propose to the user to pay on-chain (Potentially at the same time as opening a channel for future transactions)
+ If the object `onchainPayment` is present, the `f` field of `bolt11` must be completely ignored. 
+ 
+ A payment done on-chain incurs future additional cost for the merchant who need to pay for transferring the received unspent transaction output.
+
+ The merchant may choose to impact this cost to a customer choosing onchain payment method.  However, `BOLT11` does not allow different invoice amount for onchain payment made to the address in the `f` field. To overcome this limitation, a separate `onchainPayment` object is needed.
 
  ## Backward compatibility
 
