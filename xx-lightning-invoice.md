@@ -28,6 +28,9 @@ Content-Type: application/bitcoin-lightning-invoice
 {
   "bolt11" : "lnbc20m1pvjluezhp58yjmdan79s6qqdhdzgynm4zwqd5d7xmw5fk98klysy043l2ahrqspp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqfppj3a24vwu6r8ejrss3axul8rxldph2q7z9kmrgvr7xlaqm47apw3d48zm203kzcq357a4ls9al2ea73r8jcceyjtya6fu5wzzpe50zrge6ulk4nvjcpxlekvmxl6qcs9j3tz0469gq5g658y",
 
+  # Optional (Satoshi per VByte)
+  "recommendedFeeRate" : 10,
+
   # Optional
   "nodeInformation" :
   {
@@ -52,6 +55,7 @@ Content-Type: application/bitcoin-lightning-invoice
 This invoice would be parsed as:
 
  * `bolt11` as specified by [BOLT specification](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md)
+ * `recommendedFeeRate` the recommended fee rate for any onchain operation.
  * `nodeInformation` in case the wallet fails to route a Lightning payment, it can propose to open a channel to the user.
  * `nodeId` the information necessary to the wallet to create a new channel.
  * `alias` if the user creates a new channel, this is user friendly name wallet should use for the channel. 
